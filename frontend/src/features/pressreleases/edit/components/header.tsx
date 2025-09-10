@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -34,19 +33,19 @@ const Header = ({
   const handlePublicationCheck = async () => {
     setIsChecking(true);
     try {
-      const response = await fetch("/api/v1/openai/publication-check", {
+      const response = await fetch("/api/v1/openAi/publication-check", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          doc: `# ${title}\n\n${content}`,
+          content: `# ${title}\n\n${content}`,
         }),
       });
       const data = await response.json();
       setCheckResult(data.result);
     } catch (error) {
-      console.error("Publication check failed:", error);
+      console.error("掲載基準チェックに失敗しました:", error);
     } finally {
       setIsChecking(false);
     }
@@ -71,7 +70,7 @@ const Header = ({
       </div>
       {item.violations && item.violations.length > 0 && (
         <div className="ml-4 space-y-1">
-          <p className="text-sm text-red-600 font-medium">違反内容:</p>
+          <p className="text-sm text-red-600 font-medium">違反内容</p>
           <ul className="text-sm text-gray-600 list-disc list-inside">
             {item.violations.map((violation, index) => (
               <li key={index}>{violation}</li>
@@ -100,8 +99,7 @@ const Header = ({
           </DialogTrigger>
           <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>PR TIMES 掲載基準チェック結果</DialogTitle>
-              <DialogDescription>プレスリリースの掲載基準をチェックした結果です</DialogDescription>
+              <DialogTitle>掲載基準チェック結果</DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
               {checkResult ? (
@@ -139,7 +137,14 @@ const Header = ({
                 </>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">チェックを実行してください</p>
+                  {isChecking ? (
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      <p className="text-gray-500">チェック中...</p>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">チェックを実行してください</p>
+                  )}
                 </div>
               )}
             </div>
